@@ -65,7 +65,19 @@ class Layer:
             self.activation_values = input_values
     def backpropagate(self, y):
         if(self.layer_number == 1):
-            self.output_error =  np.subtract(y, self.nn.output_values)
+            for i in range(self.Neuron_count):
+                output_error = (self.activation_values[i] * (1 - self.activation_values[i])) * (y[i] - self.activation_values[i])
+                for v in range(self.prev_Layer_Neuron_count):
+                    print("i:", i, " v:", v)
+                    self.weights[v,i] = np.add(self.weights[v, i], 1 * (output_error) * self.inputs[v])
+        else:
+            if(self.prev_layer != "null"):
+                for i in range(self.Neuron_count):
+                    hidden_error = (self.activation_values[i] * (1 - self.activation_values[i])) * (self.weights) 
+                    for i in range(self.nn.layers[i+1].Neuron_count):
+                        
+
+
 
 def sigmoid(x):
     return(1/(1+math.e**(x*-1)))
