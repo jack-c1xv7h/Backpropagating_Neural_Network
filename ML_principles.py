@@ -26,11 +26,8 @@ class Neural_Network:
 
     def feedforward(self):
         for i in self.layers:
-            #print("layer_number:", i.layer_number, " prev_layer_number:", i.prev_Layer, " Neuron_count:", i.Neuron_count, " prev_Neuron_count:", i.prev_Layer_Neuron_count)
             i.feedforward()
-            #print(i.activation_values)
         self.output_values = np.array(softmax(self.layers[len(self.layers) - 1].activation_values))
-        #print(self.output_values * 100)
 
     def backpropagate(self):
         for i in reversed(range(len(self.layers))):
@@ -44,7 +41,7 @@ class Neural_Network:
 
             if current_layer.prev_Layer != "null":
                 inputs = current_layer.inputs
-                current_layer.weights -= inputs[:, np.newaxis] * current_layer.delta[np.newaxis, :] * 0.5
+                current_layer.weights -= inputs[:, np.newaxis] * current_layer.delta[np.newaxis, :] * 0.005
                 current_layer.biases -= current_layer.delta * 0.5
     def printshit(self):
         print(self.output_values)
@@ -101,6 +98,7 @@ import csv
 with open('mnist_train.csv', mode ='r')as file:
     datafile = csv.reader(file)
     i = 0
+    v = 0
     for lines in datafile:
         y = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
         y[int(lines[0])] = 1.0
@@ -109,8 +107,12 @@ with open('mnist_train.csv', mode ='r')as file:
             for col in range(0,28):
                 input_values = np.append(input_values, float(lines[row*28+col+1]))
         NeN.feedforward()
+        if np.argmax(NeN.output_values)-int(lines[0]) == 0:
+            v +=1
         NeN.backpropagate()
         i += 1
         print(i)
         if i == 60000 :
             NeN.printshit()
+            print(y)
+            print(v)
